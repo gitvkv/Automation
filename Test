@@ -1,75 +1,21 @@
-The GNC Light solution is designed to provide a streamlined, scalable, and resilient network fabric for small and very small server rooms. Below are the main highlights of this architecture:
-
-Support for 10G and 25G Server Connectivity
-
-Flexible options based on server capabilities and performance requirements.
-
-IP Mobility Across Racks
-
-Seamless host movement without IP address changes, enabling efficient VM or service migration.
-
-Pre-Approved 10G Backbone Templates for Servers
-
-Ensures consistency, simplifies deployments, and reduces configuration errors.
-
-No Manual Changes Permitted
-
-Enforced policy-based deployment using automated tools to maintain compliance and consistency.
-
-Deployment via Network Fabric as a Service (NFaaS)
-
-Simplifies and accelerates provisioning with infrastructure-as-code practices.
-
-Standardized Configuration Across All Switches
-
-Reduces operational overhead and simplifies troubleshooting.
-
-End-of-Row (EoR) Network Design
-
-Optimized for smaller environments where space and cabling are constrained.
-
-Highly Resilient Server Room Infrastructure
-
-Redundant paths and hardware for improved uptime and service availability.
-
-Traffic Segmentation Supported
-
-Enables isolation between different types of traffic, enhancing security and performance.
-
-Faster Deployment Using Pre-Defined Templates
-
-Significantly reduces time-to-deploy for new server rooms.
-
-Enhanced Network Visibility
-
-Centralized monitoring and analytics through integrated telemetry and CVP.
-
-🔄 Traffic Segmentation in Simcoe and GNC Light
-Traffic segmentation is a critical feature in GNC Light that allows for the logical separation of network traffic within the same physical infrastructure. This helps enhance security, streamline management, and improve performance.
-
-Simcoe Core Design: Dual Routing Domains
-The Simcoe core (PIC Core) is configured with two primary routing domains:
-
-Control Network (DAN): Used for switch management and CVP/CVA communication.
-
-Common Services Network: Used to deliver shared IT services like DNS, NTP, AD, etc.
-
-GNC Light Segments
-GNC Light introduces four main traffic segments, each mapped to a specific function:
-
-SMA Segment (Secure Management Access)
-
-Used for secure access to managed devices and infrastructure.
-
-Network Device Management Segment
-
-Handles traffic related to network device operations, telemetry, and provisioning.
-
-ILO Management Segment
-
-Isolates traffic for Integrated Lights-Out (iLO) interfaces of servers for out-of-band management.
-
-Common Services Segment
-
-Facilitates access to shared services such as time servers, syslog, DNS, and other internal enterprise tools.
-
+This section outlines the network communication flow between  GNC Light switches and the global enterprise network, focusing on management VLANs, routing behaviour, and regional firewall design.
+•	The management interfaces of the  GNC Light switches are configured in:
+o	VLAN 1000 and
+o	VLAN 1002
+•	Both VLANs are ultimately routed to the Control Network of the WAN routers.
+Control Network Isolation
+•	The Control Network of WAN routers is not directly accessible from the global network.
+•	To ensure secure communication, traffic between the global network and the GNC Light Control Network must pass through designated firewalls.
+ Firewall Path and Regional Routing Strategy
+•	Dedicated firewalls in both Singapore (primary) and Japan (secondary) handle this traffic:
+o	All communication from GNC Light server rooms to the global network follows a default route pointing to the Singapore region (primary headend).
+o	The Control Network subnets advertised from Singapore are preferred globally because:
+	BGP AS path prepending is applied to the routes advertised from Japan.
+	This causes the Singapore path to appear as the shorter, more optimal route.
+Communication Between  GNC Light Switches and CVP
+•	The CVP services are hosted in both Singapore and Japan, and their Control Network subnets are:
+o	Advertised to the CCCC Control Network
+o	Made reachable via the AAR routers in the GNC Light infrastructure
+•	As a result:
+o	Communication from GNC Light management switches to the respective CVP clusters is direct and doesn't require default route.
+o	This ensures low latency and high resiliency for switch provisioning, telemetry, and configuration sync.
