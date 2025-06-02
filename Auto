@@ -1,1 +1,20 @@
 
+The MSWITCH switches are connected to the WAN router using 100 Gigabit links. On the WAN side, these links are part of the global routing table.
+
+Each MSWITCH switch is configured with three separate routing domains. For proper connectivity, each of these routing domains needs to be able to communicate with the WAN router. That means every physical link from MSWITCH to WAN carries three distinct routing instances.
+
+Here’s how it breaks down:
+
+The first instance represents the global routing table on the MSWITCH switch.
+
+The second instance handles the ILOM (Integrated Lights Out Management) routing domain.
+
+The third instance is for the control network routing domain on the MSWITCH.
+
+
+All three of these routing domains on the MSWITCH switches are logically connected to the WAN’s global routing table. Since there are three routing domains on each MSWITCH switch, we need at least two subinterfaces on the connection between MSWITCH and WAN.
+
+To give an example, let’s consider one of the 100G connections between MSWITCH and WAN. The global routing table uses the physical interface directly, while the ILOM and control network routing domains are mapped to two different subinterfaces (each tagged with a VLAN).
+
+So in the end, you’ve got one physical interface and two subinterfaces — each one responsible for carrying the route information for its respective routing domain.
+
