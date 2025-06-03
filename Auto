@@ -1,20 +1,20 @@
 
-The MSWITCH switches are connected to the WAN router using 100 Gigabit links. On the WAN side, these links are part of the global routing table.
+Arista CVP Global Management: Enhanced Resilience & Operations
+Executive Summary
+We propose a two-headed Arista CloudVision Portal (CVP) solution with clusters in Singapore (Primary) and Japan (Standby). This will centralize network provisioning and telemetry for all remote sites, significantly boosting efficiency. The Japan cluster ensures continuous telemetry during a Singapore outage, mirroring our proven USA deployment model.
 
-Each MSWITCH switch is configured with three separate routing domains. For proper connectivity, each of these routing domains needs to be able to communicate with the WAN router. That means every physical link from MSWITCH to WAN carries three distinct routing instances.
+The Solution: Global CVP Deployment
+ 0 Singapore CVP (Primary): Full management – provisioning, configuration, and telemetry for all remote sites.
+ 0 Japan CVP (Standby): Telemetry-only – critical for continuous network monitoring if Singapore fails.
+Why This Matters (Key Benefits)
+ 0 Boosted Efficiency: Centralized management streamlines operations, accelerating deployments and reducing errors.
+ 0 Enhanced Resilience: Ensures critical network visibility (telemetry) even during a primary management site outage.
+ 0 Proven & Scalable: Based on our successful USA model, ready for global growth.
 
-Here’s how it breaks down:
+Key Consideration & Future Outlook
+ 0 Current Provisioning Limitation: During a Singapore CVP outage, new device provisioning and configuration changes will not be possible from the Japan cluster.
+   0 Reason: This is a current limitation of the certified CVP code.
+   0 Future Outlook: Provisioning capability via the standby cluster will be evaluated during future CVP certification efforts.
 
-The first instance represents the global routing table on the MSWITCH switch.
-
-The second instance handles the ILOM (Integrated Lights Out Management) routing domain.
-
-The third instance is for the control network routing domain on the MSWITCH.
-
-
-All three of these routing domains on the MSWITCH switches are logically connected to the WAN’s global routing table. Since there are three routing domains on each MSWITCH switch, we need at least two subinterfaces on the connection between MSWITCH and WAN.
-
-To give an example, let’s consider one of the 100G connections between MSWITCH and WAN. The global routing table uses the physical interface directly, while the ILOM and control network routing domains are mapped to two different subinterfaces (each tagged with a VLAN).
-
-So in the end, you’ve got one physical interface and two subinterfaces — each one responsible for carrying the route information for its respective routing domain.
-
+Recommendation
+Approve this CVP solution to enhance global network management, resilience, and operational efficiency.
