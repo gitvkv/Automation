@@ -1,20 +1,172 @@
+This migration initiative aims to transition cloud services from the legacy network infrastructure to the new GNC (Global Network Connectivity) network to improve scalability, performance, and long-term sustainability. As part of this strategy, we have evaluated three primary migration options, each offering distinct advantages and trade-offs based on technical feasibility, risk, downtime, and operational impact.
 
-Arista CVP Global Management: Enhanced Resilience & Operations
-Executive Summary
-We propose a two-headed Arista CloudVision Portal (CVP) solution with clusters in Singapore (Primary) and Japan (Standby). This will centralize network provisioning and telemetry for all remote sites, significantly boosting efficiency. The Japan cluster ensures continuous telemetry during a Singapore outage, mirroring our proven USA deployment model.
+Migration Options:
+vMotion with New IP Address:
 
-The Solution: Global CVP Deployment
- 0 Singapore CVP (Primary): Full management – provisioning, configuration, and telemetry for all remote sites.
- 0 Japan CVP (Standby): Telemetry-only – critical for continuous network monitoring if Singapore fails.
-Why This Matters (Key Benefits)
- 0 Boosted Efficiency: Centralized management streamlines operations, accelerating deployments and reducing errors.
- 0 Enhanced Resilience: Ensures critical network visibility (telemetry) even during a primary management site outage.
- 0 Proven & Scalable: Based on our successful USA model, ready for global growth.
+Low infrastructure risk
 
-Key Consideration & Future Outlook
- 0 Current Provisioning Limitation: During a Singapore CVP outage, new device provisioning and configuration changes will not be possible from the Japan cluster.
-   0 Reason: This is a current limitation of the certified CVP code.
-   0 Future Outlook: Provisioning capability via the standby cluster will be evaluated during future CVP certification efforts.
+High impact on application and firewall configurations
 
-Recommendation
-Approve this CVP solution to enhance global network management, resilience, and operational efficiency.
+Suitable for phased, application-by-application migration
+
+Requires significant coordination with service owners
+
+vMotion with Same IP (Legacy ↔ GNC Connectivity):
+
+Retains existing IPs, reducing app changes
+
+Requires bridging legacy and GNC networks for extended periods
+
+High infrastructure risk and operational complexity
+
+Not validated in all environments (e.g., U.S.), limited rollback ability
+
+Big Bang Migration with Same IP:
+
+One-time coordinated cutover with full infrastructure shift
+
+Requires 6–8 hours downtime and extensive testing
+
+Easier rollback plan
+
+High level of stakeholder coordination and approval required
+
+Key Considerations:
+IP address retention needs
+
+Acceptable downtime window
+
+Operational and regulatory constraints
+
+Risk tolerance regarding legacy-GNC bridging
+
+Stakeholder readiness and sign-off
+
+Next Steps:
+Review all three options with technical teams and application owners
+
+Confirm migration requirements (IP change, downtime, regulatory needs)
+
+Select preferred option based on risk assessment and business impact
+
+Finalize migration timeline, rollback plan, and stakeholder approvals
+
+
+Slide Title: Migration Strategy Overview
+Subheading: Migrating Cloud Services from Legacy Network to GNC Network
+Visual Suggestion: Flowchart showing the 3 migration options branching from a central "Legacy Network" node
+
+Slide 1: Option 1 – vMotion + New IP Address
+Title: Option 1 – vMotion to GNC with New IP
+Visual: VM moving from legacy to GNC network, IP address changing
+Key Points:
+
+VMs are migrated to the GNC network using vMotion
+
+New IP address is assigned to each VM
+
+Pros:
+
+Simple from a network architecture perspective
+
+Low risk due to application-by-application approach
+
+Cons:
+
+Application and service owners need to update DNS, firewall rules, configs
+
+Time-consuming due to coordination and testing
+
+Longer overall migration window
+
+Slide 2: Option 2 – vMotion + Same IP (Dual Network Connectivity)
+Title: Option 2 – vMotion with Same IP (Legacy ↔ GNC Connectivity)
+Visual: Arrows showing VMs keeping same IP while spanning both networks
+Key Points:
+
+VMs move from legacy to GNC infrastructure
+
+Same IP address is retained
+
+Requires legacy ↔ GNC L2/L3 connectivity
+
+Pros:
+
+Keeps same IP address (less impact for app owners)
+
+Allows slow, phased migration
+
+Cons:
+
+High infrastructure risk due to legacy equipment
+
+Not tested in some geographies (e.g., US)
+
+Extending broadcast domains = increased instability
+
+Difficult rollback and troubleshooting
+
+Operational complexity
+
+Slide 3: Option 3 – Big Bang Physical + Virtual Server Migration
+Title: Option 3 – Big Bang Migration (Same IP)
+Visual: Physical and virtual servers being moved in one large cutover window
+Key Points:
+
+Physical and virtual servers are migrated in a single event
+
+Servers retain the same IP addresses
+
+All systems must be shut down prior to migration
+
+Pros:
+
+Clean migration with well-defined rollback path
+
+No extended legacy-to-GNC bridging
+
+Cons:
+
+Requires 6–8 hours of planned downtime
+
+Challenging to get approvals from all app owners
+
+Might involve regulatory notifications and extensive UAT
+
+High coordination effort
+
+Not suitable for incremental/phased approach
+
+Slide 4: Migration Approach Considerations
+Title: Key Considerations Before Finalizing Migration Option
+Visual: Checklist or decision matrix
+Bullet Points:
+
+Level of risk tolerance (infrastructure vs application)
+
+Downtime approvals and maintenance windows
+
+Requirement to retain IP addresses
+
+Operational complexity and supportability
+
+Rollback capabilities
+
+Regulatory and UAT requirements
+
+Final decision requires full stakeholder awareness and documented sign-off
+
+Slide 5: Recommendation (Optional)
+If you're ready to suggest a preferred path:
+
+Title: Recommended Migration Path (Based on Risk/Complexity Analysis)
+Options:
+
+Choose Option 1 if simplicity and phased application migration is key, and IP change is acceptable
+
+Choose Option 2 if IP retention is mandatory, but be cautious of high risk and rollback complexity
+
+Choose Option 3 if one-time downtime is manageable, and rollback/clean cutover is a priority
+
+
+
