@@ -1,46 +1,15 @@
-1. 🔌 Total Port Inventory Overview
-Switch Type	Total Ports	Allocated Ports	Available Ports	% Utilization
-Cloud Server Switches	[###]	[###]	[###]	[##%]
-Bare Metal Switches	[###]	[###]	[###]	[##%]
-Storage Switches	[###]	[###]	[###]	[##%]
-Shared/Management Switches	[###]	[###]	[###]	[##%]
-Total	[###]	[###]	[###]	[##%]
+✅ Level 1: Summary Report
+Category	Total Ports	Allocated Ports	Available Ports	% Utilized
+Cloud Servers	960	820	140	85.4%
+Bare Metal	480	390	90	81.3%
+Storage	320	270	50	84.4%
+Shared Switches	160	120	40	75.0%
+Total	1,920	1,600	320	83.3%
 
-2. 📁 Category-Wise Detailed Port Distribution
-a. 🌐 Cloud Server Switches
-Switch ID	Location	Total Ports	Used Ports	Free Ports	Utilization %
-[ID]	[Rack/Zone]	[###]	[###]	[###]	[##%]
-...	...	...	...	...	...
-
-b. 🖥️ Bare Metal Server Switches
-Switch ID	Location	Total Ports	Used Ports	Free Ports	Utilization %
-[ID]	[Rack/Zone]	[###]	[###]	[###]	[##%]
-...	...	...	...	...	...
-
-c. 💾 Storage Switches
-Switch ID	Location	Total Ports	Used Ports	Free Ports	Utilization %
-[ID]	[Rack/Zone]	[###]	[###]	[###]	[##%]
-...	...	...	...	...	...
-
-d. 🔄 Shared Switches (Management, Infra, etc.)
-Switch ID	Location	Total Ports	Used Ports	Free Ports	Utilization %
-[ID]	[Rack/Zone]	[###]	[###]	[###]	[##%]
-...	...	...	...	...	...
-
-3. 📈 Capacity Planning Notes & Recommendations
-Threshold Alerts: Switches nearing >80% utilization: [List IDs or Names]
-
-Expansion Needs: [e.g., Add new ToR for Cloud expansion]
-
-Decommissioned Ports: [Mention if ports were retired or down]
-
-Redundancy Analysis: % of ports used for high availability links
-
-Upcoming Projects Impact: [e.g., New bare metal rack install in Q3]
-
-4. 🔮 Future Forecast (Optional)
-Service Category	Expected Growth (Next 6 Months)	Planned Port Addition	Notes
-Cloud Servers	+20%	+192 Ports	New racks planned
-Bare Metal	+10%	+96 Ports	Service onboarding
-Storage	+15%	+48 Ports	SAN upgrade
-Shared	Flat	None	Stable needs
+🔍 Level 2: Detailed Inventory Breakdown
+Switch ID	Location (Rack/Zone)	Category	Total Ports	Used Ports	Free Ports	Comments
+SW-CLD-01	R1-ZA	Cloud Servers	48	42	6	OK
+SW-CLD-02	R1-ZB	Cloud Servers	48	44	4	OK
+SW-BM-01	R2-ZA	Bare Metal	48	45	3	Monitor
+SW-ST-01	R3-ZC	Storage	48	46	2	High use
+SW-MGMT01	R4-ZX	Shared	48	30	18	Underused
