@@ -1,0 +1,46 @@
+1. 🔌 Total Port Inventory Overview
+Switch Type	Total Ports	Allocated Ports	Available Ports	% Utilization
+Cloud Server Switches	[###]	[###]	[###]	[##%]
+Bare Metal Switches	[###]	[###]	[###]	[##%]
+Storage Switches	[###]	[###]	[###]	[##%]
+Shared/Management Switches	[###]	[###]	[###]	[##%]
+Total	[###]	[###]	[###]	[##%]
+
+2. 📁 Category-Wise Detailed Port Distribution
+a. 🌐 Cloud Server Switches
+Switch ID	Location	Total Ports	Used Ports	Free Ports	Utilization %
+[ID]	[Rack/Zone]	[###]	[###]	[###]	[##%]
+...	...	...	...	...	...
+
+b. 🖥️ Bare Metal Server Switches
+Switch ID	Location	Total Ports	Used Ports	Free Ports	Utilization %
+[ID]	[Rack/Zone]	[###]	[###]	[###]	[##%]
+...	...	...	...	...	...
+
+c. 💾 Storage Switches
+Switch ID	Location	Total Ports	Used Ports	Free Ports	Utilization %
+[ID]	[Rack/Zone]	[###]	[###]	[###]	[##%]
+...	...	...	...	...	...
+
+d. 🔄 Shared Switches (Management, Infra, etc.)
+Switch ID	Location	Total Ports	Used Ports	Free Ports	Utilization %
+[ID]	[Rack/Zone]	[###]	[###]	[###]	[##%]
+...	...	...	...	...	...
+
+3. 📈 Capacity Planning Notes & Recommendations
+Threshold Alerts: Switches nearing >80% utilization: [List IDs or Names]
+
+Expansion Needs: [e.g., Add new ToR for Cloud expansion]
+
+Decommissioned Ports: [Mention if ports were retired or down]
+
+Redundancy Analysis: % of ports used for high availability links
+
+Upcoming Projects Impact: [e.g., New bare metal rack install in Q3]
+
+4. 🔮 Future Forecast (Optional)
+Service Category	Expected Growth (Next 6 Months)	Planned Port Addition	Notes
+Cloud Servers	+20%	+192 Ports	New racks planned
+Bare Metal	+10%	+96 Ports	Service onboarding
+Storage	+15%	+48 Ports	SAN upgrade
+Shared	Flat	None	Stable needs
