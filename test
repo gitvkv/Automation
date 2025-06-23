@@ -1,0 +1,7 @@
+Here are the answers to your questions, based on the information provided:
+First Question: Describe exactly what the change is.
+The change involves logically preparing CVA and CVP devices for production use. These devices are already physically installed and connected to the existing infrastructure. The goal is to configure and ready these new devices so they can be brought online for production.
+Second Question: Why does it need to be done over the week?
+This deployment is a lengthy process, even though it could technically be done "on the fly." A Change Request (CRQ) is required for proper documentation. Given the significant time commitment involved, the deployment is planned for a weekday during a dedicated change window. While typically six devices take a week to deploy globally, in Asia, the plan is to deploy 12 devices within the same one-week timeframe, making it impractical to complete in just one or two days.
+Third Question: How do we avoid impact to production?
+There will be no impact to production. The changes are confined to the new CVA and CVP devices. No routing configurations will be altered on the existing production network as part of this deployment.
