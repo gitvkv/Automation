@@ -1,7 +1,28 @@
-Here are the answers to your questions, based on the information provided:
-First Question: Describe exactly what the change is.
-The change involves logically preparing CVA and CVP devices for production use. These devices are already physically installed and connected to the existing infrastructure. The goal is to configure and ready these new devices so they can be brought online for production.
-Second Question: Why does it need to be done over the week?
-This deployment is a lengthy process, even though it could technically be done "on the fly." A Change Request (CRQ) is required for proper documentation. Given the significant time commitment involved, the deployment is planned for a weekday during a dedicated change window. While typically six devices take a week to deploy globally, in Asia, the plan is to deploy 12 devices within the same one-week timeframe, making it impractical to complete in just one or two days.
-Third Question: How do we avoid impact to production?
-There will be no impact to production. The changes are confined to the new CVA and CVP devices. No routing configurations will be altered on the existing production network as part of this deployment.
+This document outlines the currently approved templates for bare metal servers within the Asia-Pacific (APAC) region, focusing specifically on network connectivity. We will not be discussing storage connectivity that directly attaches to servers.
+
+Bare Metal Server Types
+In APAC, we utilize two primary types of bare metal servers based on their network port configurations:
+
+Two-Port Bare Metal Servers: These are standard bare metal servers that do not have cluster capabilities.
+
+Four-Port Bare Metal Servers: These servers are designed for cluster configurations and are referred to as "cluster servers."
+
+Network Connectivity
+Two-Port Bare Metal Servers (Normal Servers)
+Production Connectivity: These servers are equipped with two production ports.
+
+Network Connection: Both production ports will be connected to the production network, specifically to a production VLAN.
+
+No Cluster Connectivity: These servers do not have any provisions for cluster-specific network connectivity.
+
+Four-Port Bare Metal Servers (Cluster Servers)
+Production Connectivity: Two of the four ports will be connected to a production VLAN, similar to the two-port servers.
+
+Cluster Connectivity: The remaining two ports will be dedicated to cluster connectivity. These ports will be connected to a cluster VLAN, which operates at Layer 2. This cluster VLAN is also referred to as a heartbeat VLAN.
+
+General Network Design Principles
+Baronet VLANs: It is crucial to note that all bare metal servers connected to the same pair of network switches will utilize the same "baronet" VLAN for their primary connectivity.
+
+Access Ports: As per the requirements from the server team, there is no need for Port Channel or LACP (Link Aggregation Control Protocol) configurations for bare metal server interfaces. Consequently, all interfaces connected to bare metal servers will be configured as access ports.
+
+Template-Driven Automation: Any requirement for a new type of connectivity or an additional VLAN necessitates the creation of a new server template. This also implies that an automation-related change will be required to provision and manage such new configurations.
