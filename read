@@ -1,0 +1,174 @@
+Low-Level Design Document: CVP on CVA Deployment Guide
+This document outlines the low-level design and procedural steps for deploying Cloud Vision Portal (CVP) on Cloud Vision Appliance (CVA). Adherence to these guidelines is crucial for a successful and secure deployment.
+
+1. Pre-Deployment What You'll Need & How to Plan!
+Before initiating any CVA/CVP build, thorough planning and pre-requisite verification are essential.
+
+1.1 Network Connectivity Schema
+A detailed network connectivity schema must be established, illustrating the logical and physical connections between CVA, CVP, core switches, and other relevant network devices. This includes:
+
+Physical Connectivity: Port assignments, cable types, and physical paths.
+
+Logical Connectivity: VLANs, routing paths, and inter-device communication flows.
+
+1.2 VLAN Mapping
+Precise VLAN mapping is critical for network segmentation and traffic isolation. Document the following:
+
+CVA Management VLAN: VLAN ID for CVA out-of-band management.
+
+CVP Management VLAN: VLAN ID for CVP out-of-band management.
+
+Data Plane VLANs: VLANs used for production fabric communication between CVP/CVA and network devices (e.g., streaming telemetry, gRPC).
+
+Inter-Appliance Communication VLAN: If CVP/CVA components communicate across different appliances, define their dedicated VLAN.
+
+1.3 IP Address Mapping
+All IP addresses must be pre-allocated and documented.
+
+CVA IP Addresses:
+
+Management Interface IP
+
+Data Interface IP (if applicable)
+
+Loopback IP (if applicable)
+
+CVP IP Addresses:
+
+Management Interface IP
+
+Data Interface IP (if applicable)
+
+Loopback IP (if applicable)
+
+CBI (CloudVision Backbone Interface) IP: IP address for communication with the CloudVision backbone.
+
+CPS (CloudVision Portal Services) IP: IP address for CVP services.
+
+Gateway Information: Default gateway IP addresses for all relevant VLANs/subnets.
+
+Subnet Mask: Subnet masks associated with all allocated IP addresses.
+
+1.4 Connectivity Metrics
+Define and document the expected connectivity metrics to ensure performance and reliability. This includes:
+
+Latency: Acceptable latency between CVP/CVA and managed devices.
+
+Bandwidth: Required bandwidth for streaming telemetry, configuration pushes, and other CVP operations.
+
+Packet Loss: Acceptable packet loss thresholds.
+
+1.5 Firewall Rules (Pre-Build Criticality)
+It is paramount that all necessary firewall rules are in place and verified before commencing the CVA and CVP build. Failure to do so will result in deployment failures and significant delays.
+
+Ports to be Allowed (from CVP/CVA):
+
+SSH (TCP 22): For management access.
+
+HTTPS (TCP 443): For CVP web UI, API access, and communication with external services.
+
+gRPC (TCP 6040): For streaming telemetry and device communication.
+
+NTP (UDP 123): For time synchronization.
+
+DNS (UDP 53/TCP 53): For name resolution.
+
+Syslog (UDP 514): For logging.
+
+SNMP (UDP 161/162): For monitoring (if used).
+
+Specific Arista Services Ports: Consult Arista documentation for any other proprietary ports required for CVP/CVA functionality.
+
+Ports to be Allowed (to CVP/CVA):
+
+SSH (TCP 22): For administrative access.
+
+HTTPS (TCP 443): For user access to the CVP UI.
+
+gRPC (TCP 6040): For devices to send telemetry.
+
+Source and Destination IP Ranges: Clearly define the source and destination IP addresses/subnets for each allowed port.
+
+2. NFAS Portal & Engineering Scripts
+The Global NFAS portal is central to CVA/CVP builds, leveraging engineering scripts for automation.
+
+2.1 NFAS Release Management
+NCD Creation: Asia Pacific Network engineers must be created in NCD (Network Change Driver) for CVA and CVP builds.
+
+NFAS Release Requirement: Any CVA and CVP build necessitates an NFAS release to be available for NCD.
+
+Jira Ticket for NFAS Release: The team is required to create a Jira ticket for the NFAS team to build this release.
+
+Essential Release Details: For engineering scripts, it is critical to understand:
+
+Environment Name: (e.g., Production, Staging, Development)
+
+Pod Name: Specific data center or logical grouping.
+
+Release Number: Version of the NFAS release.
+
+2.2 Engineering Script Details
+The engineering script will call the required configuration items, including:
+
+Infrastructure Code: Base configurations for the environment.
+
+Core Area Switches: Configurations related to the network infrastructure supporting CVA/CVP.
+
+CVA/CVP Specific Configurations: Configurations directly applied to the CVA and CVP appliances.
+
+Terminal Routers: Configurations for edge devices interacting with CVP.
+
+2.3 Privilege Access for CVA/CVP Build
+Before the change, the engineer must have the necessary privilege access for CVA/CVP build, including:
+
+Certificate Server Access: Access to the certificate server is required to obtain necessary certificates.
+
+Access Request Management Portal: More details on obtaining access to the certificate server, including required exams, are available on the Access Request Management Portal.
+
+2.4 Release Cloning & Script Review
+Release Cloning: Once the NFAS release is ready, engineers need to verify whether those releases can be cloned on Asia NFAS Linux servers.
+
+Script Review: Once an engineering script is created, it must be shared with CVA admins and the NFAS team for thorough review and approval.
+
+2.5 Engineering Script Structure
+The engineering script should be logically divided into two primary sections:
+
+Device Administrative Network: Configurations related to the out-of-band management network for CVA/CVP.
+
+Production Fabric: Configurations related to the in-band data plane and telemetry communication.
+
+2.6 NCD Sections
+The NCD (Network Change Driver) should incorporate the following sections for a robust change management process:
+
+Pre-Check Section: Commands and procedures to verify the environment's readiness before implementation.
+
+Back Out Section: Detailed steps to revert the changes in case of deployment failure or issues.
+
+Implementation Script: The core commands and procedures for deploying CVA and CVP.
+
+3. Deployment & Post-Deployment Tasks
+3.1 Change Approval & Deployment
+CRQ Presentation: The engineer must present the Change Request (CRQ) in the Asia Change Approval Board (CAB) for approval.
+
+Peer Review: Ensure a peer review of the engineering script and CRQ is completed before deployment.
+
+Deployment Execution: Once the change is approved and peer review is done, engineers should deploy CVA and CVP strictly as per the engineering script.
+
+3.2 Operations Team Coordination
+AAA Device Addition: During the change, the engineer must inform the operations team to add the newly deployed devices to AAA (Authentication, Authorization, and Accounting) using appropriate credentials.
+
+3.3 Configuration Item Status Update
+CI Status Change: After successful completion of the deployment, engineers should change the Configuration Item (CI) status from "In Assembly" to "Deployed" state in the CMDB.
+
+3.4 Integration with Enterprise Tools
+CyberArk Integration: The engineer should reach out to the CyberArk team to add the newly onboarded devices to the CyberArk system for privileged access management. This typically involves sending an email to their dedicated email ID.
+
+Monitoring Tool Integration: The engineer should raise a Jira ticket for the Tools team to add the devices to the central monitoring tool, ensuring proper health and performance monitoring.
+
+3.5 gRPC Unstucker Bug Fix
+NFAS System Admin Engagement: Once devices are added to CyberArk, engineers should reach out to the NFAS system admin to apply the bug fix related to gprc unstucker.
+
+gRPC Unstucker Functionality: The gprc unstucker is a cron job designed to mitigate a known bug currently present on existing network devices, ensuring stable gRPC communication.
+
+3.6 Handover to Operations
+Final Handover: Once all the aforementioned tasks are completed and verified, the engineer should formally hand over these devices to the operations team for day-to-day management and support.
