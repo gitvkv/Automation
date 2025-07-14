@@ -1,15 +1,64 @@
-✅ Level 1: Summary Report
-Category	Total Ports	Allocated Ports	Available Ports	% Utilized
-Cloud Servers	960	820	140	85.4%
-Bare Metal	480	390	90	81.3%
-Storage	320	270	50	84.4%
-Shared Switches	160	120	40	75.0%
-Total	1,920	1,600	320	83.3%
+import socket
 
-🔍 Level 2: Detailed Inventory Breakdown
-Switch ID	Location (Rack/Zone)	Category	Total Ports	Used Ports	Free Ports	Comments
-SW-CLD-01	R1-ZA	Cloud Servers	48	42	6	OK
-SW-CLD-02	R1-ZB	Cloud Servers	48	44	4	OK
-SW-BM-01	R2-ZA	Bare Metal	48	45	3	Monitor
-SW-ST-01	R3-ZC	Storage	48	46	2	High use
-SW-MGMT01	R4-ZX	Shared	48	30	18	Underused
+def resolve_name_to_ip(hostname):
+    """Resolves a hostname to its IP address."""
+    try:
+        ip_address = socket.gethostbyname(hostname)
+        return ip_address
+    except socket.gaierror:
+        return None
+
+def resolve_ip_to_name(ip_address):
+    """Resolves an IP address to its hostname."""
+    try:
+        hostname, _, _ = socket.gethostbyaddr(ip_address)
+        return hostname
+    except socket.herror:
+        return None
+
+def is_valid_ip(address):
+    """Checks if a string is a valid IPv4 address."""
+    try:
+        socket.inet_pton(socket.AF_INET, address)
+        return True
+    except socket.error:
+        return False
+
+def main():
+    """Main function to run the interactive resolution script."""
+    print("Welcome to the Name/IP Resolution Tool!")
+    print("Enter a list of hostnames or IP addresses, one per line.")
+    print("Type 'done' on a new line when you are finished entering inputs.")
+
+    inputs = []
+    while True:
+        user_input = input("Enter hostname/IP (or 'done'): ").strip()
+        if user_input.lower() == 'done':
+            break
+        if user_input:
+            inputs.append(user_input)
+
+    if not inputs:
+        print("No inputs provided. Exiting.")
+        return
+
+    print("\n--- Resolution Results ---")
+    for item in inputs:
+        if is_valid_ip(item):
+            # It's an IP, try to resolve to name
+            hostname = resolve_ip_to_name(item)
+            if hostname:
+                print(f"IP: {item} -> Hostname: {hostname}")
+            else:
+                print(f"IP: {item} -> Hostname: NOT FOUND (or error)")
+        else:
+            # Assume it's a hostname, try to resolve to IP
+            ip_address = resolve_name_to_ip(item)
+            if ip_address:
+                print(f"Hostname: {item} -> IP: {ip_address}")
+            else:
+                print(f"Hostname: {item} -> IP: NOT FOUND (or error)")
+    print("--------------------------")
+
+if __name__ == "__main__":
+    main()
