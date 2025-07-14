@@ -1,64 +1,125 @@
-import socket
+import paramiko
+import time
+import re
+import getpass
+import sys
 
-def resolve_name_to_ip(hostname):
-    """Resolves a hostname to its IP address."""
+def check_device_in_hpna_ssh(
+    hpna_host, hpna_port, username, password, device_hostname,
+    timeout=10, buffer_size=4096
+):
+    """
+    Connects to HPNA via SSH and checks if a device exists using CLI commands.
+
+    Args:
+        hpna_host (str): The IP address or hostname of the HPNA server.
+        hpna_port (int): The SSH port of the HPNA server (usually 22).
+        username (str): The SSH username for the HPNA server.
+        password (str): The SSH password for the HPNA server.
+        device_hostname (str): The hostname of the device to check in HPNA.
+        timeout (int): SSH command timeout in seconds.
+        buffer_size (int): Buffer size for reading SSH output.
+
+    Returns:
+        bool: True if the device is found, False otherwise.
+    """
+    client = None
     try:
-        ip_address = socket.gethostbyname(hostname)
-        return ip_address
-    except socket.gaierror:
-        return None
+        print(f"Attempting to connect to HPNA via SSH at {hpna_host}:{hpna_port}...")
+        client = paramiko.SSHClient()
+        client.load_system_host_keys()
+        client.set_missing_host_key_policy(paramiko.AutoAddPolicy()) # Be cautious in production
+        client.connect(hostname=hpna_host, port=hpna_port, username=username, password=password, timeout=timeout)
+        print("SSH connection established.")
 
-def resolve_ip_to_name(ip_address):
-    """Resolves an IP address to its hostname."""
-    try:
-        hostname, _, _ = socket.gethostbyaddr(ip_address)
-        return hostname
-    except socket.herror:
-        return None
+        # Establish an interactive shell to run HPNA specific commands
+        # The exact command to enter HPNA CLI might vary.
+        # Often, just logging in puts you in the shell, or it might be a specific command like 'hpsa'
+        # For HPNA, sometimes you'd use 'runcmd' directly on the appliance.
+        # A common way to get device info from HPNA CLI is to use 'list device' or 'get device <hostname>'
+        # The following assumes that `list device name=<hostname>` is the command to use.
+        # You might need to adjust this command based on your HPNA version's CLI.
+        
+        command = f"list device name=\"{device_hostname}\""
+        print(f"Executing command: '{command}'")
 
-def is_valid_ip(address):
-    """Checks if a string is a valid IPv4 address."""
-    try:
-        socket.inet_pton(socket.AF_INET, address)
-        return True
-    except socket.error:
-        return False
+        # Execute the command
+        stdin, stdout, stderr = client.exec_command(command, timeout=timeout)
 
-def main():
-    """Main function to run the interactive resolution script."""
-    print("Welcome to the Name/IP Resolution Tool!")
-    print("Enter a list of hostnames or IP addresses, one per line.")
-    print("Type 'done' on a new line when you are finished entering inputs.")
+        # Read output
+        output = stdout.read().decode('utf-8').strip()
+        error = stderr.read().decode('utf-8').strip()
 
-    inputs = []
-    while True:
-        user_input = input("Enter hostname/IP (or 'done'): ").strip()
-        if user_input.lower() == 'done':
-            break
-        if user_input:
-            inputs.append(user_input)
+        if error:
+            print(f"Command produced stderr output:\n{error}")
 
-    if not inputs:
-        print("No inputs provided. Exiting.")
-        return
+        print(f"Command output:\n{output}")
 
-    print("\n--- Resolution Results ---")
-    for item in inputs:
-        if is_valid_ip(item):
-            # It's an IP, try to resolve to name
-            hostname = resolve_ip_to_name(item)
-            if hostname:
-                print(f"IP: {item} -> Hostname: {hostname}")
+        # --- IMPORTANT: Parsing Logic ---
+        # This parsing logic depends heavily on the exact output format of your HPNA CLI.
+        # You'll need to inspect the output of `list device name="<hostname>"`
+        # for a device that EXISTS and a device that DOES NOT EXIST.
+
+        # Common indicators for existence:
+        # 1. Output contains the device hostname in a structured way.
+        # 2. Output contains specific keywords like "Found", "DeviceID", etc.
+        # 3. Output is not empty or does not contain "No devices found" / "Device not found".
+
+        # Example parsing: Check if the hostname appears in the output, or if specific device properties are listed.
+        # A simple check: does the output contain the hostname itself, assuming successful query shows it?
+        if device_hostname.lower() in output.lower() and "no devices" not in output.lower():
+            # A more robust check might involve looking for specific patterns, e.g., DeviceID: <number>
+            if re.search(r'Device ID:\s*\d+', output) or re.search(re.escape(device_hostname) + r'\s+.*\s+.*\s+active', output, re.IGNORECASE | re.DOTALL):
+                 print(f"Device '{device_hostname}' found in HPNA based on CLI output.")
+                 return True
+            elif "No matching devices found" in output or "No devices were found" in output:
+                print(f"Device '{device_hostname}' NOT found in HPNA (CLI explicitly stated no match).")
+                return False
             else:
-                print(f"IP: {item} -> Hostname: NOT FOUND (or error)")
+                 print(f"Ambiguous output for device '{device_hostname}'. Further inspection needed.")
+                 return False
+        elif "No matching devices found" in output or "No devices were found" in output:
+            print(f"Device '{device_hostname}' NOT found in HPNA (CLI explicitly stated no match).")
+            return False
         else:
-            # Assume it's a hostname, try to resolve to IP
-            ip_address = resolve_name_to_ip(item)
-            if ip_address:
-                print(f"Hostname: {item} -> IP: {ip_address}")
-            else:
-                print(f"Hostname: {item} -> IP: NOT FOUND (or error)")
-    print("--------------------------")
+            print(f"Device '{device_hostname}' NOT found in HPNA based on general CLI output (or unexpected format).")
+            return False
+
+    except paramiko.AuthenticationException:
+        print(f"Authentication failed for {username}@{hpna_host}. Check username and password.")
+        return False
+    except paramiko.SSHException as e:
+        print(f"SSH error occurred: {e}")
+        return False
+    except TimeoutError:
+        print(f"SSH connection or command timed out after {timeout} seconds.")
+        return False
+    except Exception as e:
+        print(f"An unexpected error occurred: {e}")
+        return False
+    finally:
+        if client:
+            client.close()
+            print("SSH connection closed.")
 
 if __name__ == "__main__":
-    main()
+    # --- Configuration ---
+    HPNA_HOST = input("Enter HPNA Server IP/Hostname: ").strip()
+    HPNA_PORT = int(input("Enter HPNA SSH Port (default 22): ") or "22")
+    HPNA_USERNAME = input("Enter SSH Username for HPNA: ").strip()
+    HPNA_PASSWORD = getpass.getpass("Enter SSH Password for HPNA: ").strip()
+    DEVICE_TO_CHECK = input("Enter the hostname of the device to check in HPNA: ").strip()
+
+    if not all([HPNA_HOST, HPNA_USERNAME, HPNA_PASSWORD, DEVICE_TO_CHECK]):
+        print("All fields are required. Please try again.")
+        sys.exit(1)
+
+    print("\n--- Checking Device Status in HPNA via SSH ---")
+    device_exists = check_device_in_hpna_ssh(
+        HPNA_HOST, HPNA_PORT, HPNA_USERNAME, HPNA_PASSWORD, DEVICE_TO_CHECK
+    )
+
+    if device_exists:
+        print(f"\nFinal Result: Device '{DEVICE_TO_CHECK}' is confirmed to be in HPNA.")
+    else:
+        print(f"\nFinal Result: Device '{DEVICE_TO_CHECK}' is NOT in HPNA or the check failed.")
