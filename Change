@@ -1,0 +1,114 @@
+Changing the IP address of a VM server, especially in a production environment, must be done carefully to avoid outages, security issues, or application downtime. Here’s a structured breakdown of **steps** and **key considerations** to ensure a safe transition.
+
+---
+
+## 🔧 Steps to Change IP Address on a VM Server
+
+### 1. **Pre-Change Validation and Planning**
+
+* **Review current network design**: VLANs, subnets, gateways, DNS, routing.
+* **Determine new IP**: Ensure it's within correct subnet and not in use (IPAM check).
+* **Understand dependencies**:
+
+  * Applications (hardcoded IPs?)
+  * Firewall rules
+  * DNS records (A/AAAA, PTR)
+  * Load balancers
+  * Monitoring tools
+  * Backup jobs or replication
+  * Configuration management tools (like Ansible, Puppet)
+
+---
+
+### 2. **Take Backups and Snapshots**
+
+* **VM snapshot** (if possible)
+* Backup important config files and application data
+
+---
+
+### 3. **Schedule a Maintenance Window**
+
+* Inform stakeholders
+* Ensure business approval
+* Align with change management processes (if ITIL or similar followed)
+
+---
+
+### 4. **Update DNS and Other Records in Advance**
+
+* Modify or create DNS records (if you plan to use FQDN)
+* Update monitoring, CMDB, inventory tools
+
+---
+
+### 5. **Change the IP Address**
+
+* OS level config:
+
+  * **Linux**: `/etc/netplan/`, `/etc/network/interfaces`, `nmcli`, or `ip` depending on distro
+  * **Windows**: `ncpa.cpl` or PowerShell (`Set-NetIPAddress`)
+* Update the default gateway if needed
+* Update `/etc/hosts` or `C:\Windows\System32\drivers\etc\hosts` (optional)
+
+---
+
+### 6. **Restart Network Service / Reboot (if needed)**
+
+* Restart networking (`systemctl restart network`, `netplan apply`, etc.)
+* Confirm IP with `ip a`, `ifconfig`, or `ipconfig`
+
+---
+
+### 7. **Validate and Test**
+
+* Ping the gateway
+* DNS resolution
+* Access application/web UI/SSH/RDP
+* Check logs for anomalies
+* Validate firewall logs and monitoring alerts
+
+---
+
+### 8. **Update Firewalls / Security Groups**
+
+* If you're using cloud (AWS/GCP/Azure), update SGs
+* On-prem: update ACLs/firewalls with new IP
+
+---
+
+### 9. **Update Documentation**
+
+* CMDB, Visio/network diagram, IPAM, Confluence, etc.
+
+---
+
+## 🧠 Key Considerations in Production Environments
+
+| Area                         | Things to Consider                                                                    |
+| ---------------------------- | ------------------------------------------------------------------------------------- |
+| **Application Impact**       | Applications that bind to IPs may need reconfiguration                                |
+| **Hardcoded IPs**            | Scripts, DB config files, app settings, integration endpoints                         |
+| **Firewall Rules**           | Egress/ingress traffic may be blocked after change                                    |
+| **DNS TTL**                  | Lower DNS TTL temporarily to allow faster propagation                                 |
+| **Monitoring/Alerting**      | Update monitoring tools (Zabbix, Prometheus, etc.) with new IP                        |
+| **Backups and Replications** | Ensure backup systems can reach the server post-change                                |
+| **Cluster Membership**       | If VM is part of a cluster (K8s, DB clusters), IP change may break trust or heartbeat |
+| **Automation**               | Ansible inventory, CI/CD pipelines might need IP update                               |
+| **Routing**                  | Confirm routes and gateway connectivity post-IP change                                |
+| **Security Tools**           | Update IP in firewall, WAF, SIEM, etc. if applicable                                  |
+
+---
+
+## ✅ Post-Change Checklist
+
+* [ ] Can reach the server via new IP
+* [ ] All apps running and accessible
+* [ ] DNS name resolving correctly
+* [ ] Monitoring tools showing green
+* [ ] No firewall or connectivity issues
+* [ ] Change documented and closed properly
+
+---
+
+Let me know your environment details (Linux/Windows, on-prem/cloud, etc.) if you want commands or a tailored runbook.
