@@ -1,3 +1,82 @@
+Proposal: Workflow Improvements for Server Room Design and NIDM Flexibility
+
+We propose a revision to the current workflow for both existing and future server room deployments. The goal is to reduce the number of SKUs and accelerate time to market, while maintaining control and consistency in configurations.
+
+Background & Rationale
+
+* Business requirements are evolving rapidly and are expected to continue changing.
+* Making changes in NIDM to reflect evolving needs is time-consuming and rigid.
+* To address this, data modeling needs to be more flexible, and at the same time, controls must be enforced to prevent config drift from established standards.
+
+
+Proposed Workflow Changes
+
+Step 1: Requirement Finalization and Decoupling Rack Layouts
+
+* Engineers must work with server, storage, and application teams to finalize and document requirements.
+* Currently, server/storage/application requirements are tightly coupled with rack layout design.
+* Proposal: For Agora Lite, decouple application/service requirements from the physical rack layout.
+
+  * Rack layouts vary across server rooms (e.g., 5kW vs 12kW support, mini pod vs standard pod).
+  * Physical deployment should adapt to site-specific power and cooling capabilities, but logical requirements should remain standardized.
+
+
+Step 2: Modular Configuration Design
+
+Break down configurations into three modular layers:
+
+1. Baseline Configuration:
+
+   * Common across all devices and all PODs.
+   * Must support core capabilities such as:
+
+     * Multicast
+     * Basic BGP routing
+     * All required VRFs
+
+2. Service/Application Configuration:
+
+   * Service-specific features or application connectivity
+   * Only added based on requirement scope
+
+3. Interface Configuration:
+
+   * Final layer tailored to specific cabling and interface mappings
+   * Should be automated wherever possible
+
+
+Step 3: Define Required NIDM SKUs
+
+The following SKUs should be defined in NIDM to streamline operational workflows:
+
+1. POD Build SKU
+  * Includes base build config, routing, core services
+
+2. VLAN Creation SKU
+  * Covers end-to-end provisioning of VLANs, including tagging, VRF binding, and route advertisements
+
+3.  Interface Configuration SKU
+  * Interface-level configs mapped to finalized physical connectivity
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 Changing the IP address of a VM server, especially in a production environment, must be done carefully to avoid outages, security issues, or application downtime. Here’s a structured breakdown of **steps** and **key considerations** to ensure a safe transition.
 
 ---
