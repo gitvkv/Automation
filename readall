@@ -1,0 +1,57 @@
+Got it. Here’s a crisp, submission-ready section you can drop in.
+
+# Why We Cannot “Upgrade” **Agora Lite** to **Standard Agora** Later
+
+**Executive summary:** Converting Agora Lite into Standard Agora is not a software toggle—it’s a **full re-architecture**. In practice it requires **similar effort to building a new data center**, the **migration is highly complex**, **current automation is not designed** for such a conversion, and **traffic flows/policy boundaries change** fundamentally.
+
+## Key reasons
+
+1. **Fabric Architecture Delta (not additive)**
+
+* Standard Agora introduces/expands **Super-Spine, DAN/Production fabrics, CORE/ICZ/SMC/Control IZ** with different failure domains and scaling limits.
+* EVPN/VXLAN roles (RR placement, ASN scheme, loopbacks, MTU, ECMP fan-out) must be redesigned—not “grown” from Lite.
+
+2. **Hardware & Physical Plant Changes**
+
+* Standard Agora relies on **higher-radix spines/leafs, higher-speed optics, different line-cards/PSU footprints**, and denser cabling.
+* These are **non-trivial retrofits**: new racks, power, cooling, optics, and recabling windows—i.e., work comparable to a greenfield build.
+
+3. **Management & Control Plane Relocation**
+
+* Lite depends on **head-end** for management; Standard Agora is **site-local and autonomous**.
+* Moving to local SMA/SMC, AAA/PKI, telemetry, and CI/CD bootstraps **rekeys identities**, rebuilds trust domains, and rewires Day-1/Day-2 flows.
+
+4. **Security & Policy Boundary Flip**
+
+* Lite’s control/data often **traverse head-end firewalls**; Standard Agora enforces **on-site**.
+* This inverts **traffic inspection points**, NAT/service-chaining, DMZ placement, and audit scopes—requiring full rule/policy redesign and re-attestation.
+
+5. **Addressing & Routing Replan**
+
+* **ASNs, loopbacks, anycast VIPs, VRF layout, inter-DC peering** and summarization boundaries differ.
+* Renumbering and re-peering across fabrics and head-end domains is a brownfield heavy-lift with real outage risk.
+
+6. **Automation Gap (Design Intent)**
+
+* Current automation is **greenfield-oriented** (idempotent build of Lite **or** Standard), **not** a “convert Lite → Standard” pathway.
+* Inventory bindings, device personas, templates, and guardrails **don’t support in-place role swaps**; you’d rebuild state, then re-attach hosts.
+
+7. **Traffic Flow & Egress Patterns Change**
+
+* Egress points, default-exit VRFs, service-chain insertion, and control-plane hairpins **change between Lite and Standard**.
+* During coexistence you risk **asymmetry/blackholes** unless you run dual-fabric bridging or staged tenant cutovers.
+
+8. **Migration Complexity ≈ New Build + Cutover**
+
+* You must stand up a parallel Standard Agora, validate, then **migrate tenants/racks incrementally** (vMotion/L2 stretch or app-level moves), re-create LAGs, QoS/ACLs, and re-plumb security zones.
+* This is **organizationally heavy** (change windows, rollback plans, audit updates) and technically fragile.
+
+9. **Cost/Time Parity with a New DC Build**
+
+* When you add up **new hardware, optics, cabling, rack/power upgrades, policy/automation rebuild, and multi-phase cutovers**, the program is **on par with building Standard Agora from scratch**, but with **higher risk** due to brownfield constraints.
+
+## Bottom line
+
+* **Agora Lite → Standard Agora is not an upgrade; it’s a re-platform.**
+* It demands effort comparable to a **new data-center build**, with **greater migration risk** and **no automation pathway** to guarantee a safe in-place conversion.
+* For any **strategic data center**, deploy **Standard Agora from Day-1** and avoid a costly, risky retrofit later.
