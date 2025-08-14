@@ -1,0 +1,42 @@
+Here’s a tight, submission-ready write-up you can drop into your doc/email.
+
+# Why a Strategic DC Requires Full-Stack **Agora** (and not **Agora Lite**)
+
+**TL;DR:** A strategic data center (SDC) hosts mission-critical, high-growth workloads with strict SLOs. It must be autonomous, resilient, and scalable. **Full-Stack Agora** delivers that: local management/control, higher throughput, larger scale, and stronger failure isolation. **Agora Lite** is intentionally right-sized for server rooms and depends on head-end services—those dependencies and scale limits make it unsuitable for an SDC.
+
+## 1) Autonomy & Survivability
+
+* **Local management/control**: Full-Stack Agora keeps SMA/SMC and management constructs on-site, so the DC can operate in “island mode” during WAN, head-end, or firewall outages.
+* **Agora Lite depends on head-end** management and must traverse head-end firewalls for control/Baronet paths, creating external single points of failure and change-coordination bottlenecks—unacceptable for SDC recovery objectives.
+
+## 2) Scale & Performance
+
+* **Throughput and headroom**: Full-Stack Agora runs on up-rated hardware designed for high east-west traffic and large tenant counts.
+* **Capacity ceilings**: Agora Lite is capped (≈ **80 compute racks**) and optimized for compact sites. Strategic DCs routinely exceed this and need predictable scaling without re-architecture.
+
+## 3) Resiliency & Fault Domains
+
+* **Self-sustained fabric**: Full-Stack Agora provides redundant control, data, and management planes within the site, minimizing cross-site blast radius.
+* **Lite increases coupled risk**: Tying control to a head-end extends fault domains across sites; an upstream maintenance or security policy change can impact SDC production.
+
+## 4) Security, Compliance, and Latency Budgets
+
+* **On-site enforcement**: Full-Stack Agora allows local, deterministic policy enforcement for Day-1/Day-2 services (SMA/SMC) and DMZ constructs.
+* **Lite adds hops** across head-end firewalls, inflating control/data-plane latency and complicating audit boundaries—misaligned with SDC compliance and low-latency requirements.
+
+## 5) Operational Model & Growth
+
+* **Strategic footprint**: SDCs require rapid scale-out (new zones, tenants, fabrics) and tight change windows. Full-Stack Agora supports this with standardized, site-local primitives.
+* **Lite is a fit-for-purpose edge solution**: Excellent for server rooms; not for long-horizon, high-growth SDC roadmaps.
+
+## 6) Business Risk if Lite is used in an SDC (What breaks first)
+
+* Cross-site dependency undermines DR/BCP assumptions.
+* Latency and policy choke points at head-end firewalls impact Day-2 ops.
+* Capacity ceilings force premature re-platforming.
+* Higher coordination overhead (tickets/approvals) for routine changes.
+* Expanded blast radius from head-end incidents.
+
+### Conclusion
+
+For a strategic DC, **Full-Stack Agora** is mandatory to meet autonomy, resiliency, scale, and compliance objectives. **Agora Lite** is intentionally designed for smaller, cost-optimized sites and its head-end dependencies and scale limits disqualify it from SDC deployments.
